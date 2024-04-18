@@ -10,7 +10,6 @@ const logger = winston.createLogger({
             format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
         }),
     ],
-    format: winston.format.combine(winston.format.colorize(), winston.format.json()),
 });
 
 export default logger;
