@@ -1,6 +1,6 @@
 import winston from 'winston';
 import expressWinston from 'express-winston';
-import logger from '../utils/logger';
+import { logger } from '../utils';
 
 const loggingMiddleware = expressWinston.logger({
     winstonInstance: logger,

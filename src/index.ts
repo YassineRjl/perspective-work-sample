@@ -7,10 +7,13 @@ import authMiddleware from './middlewares/auth.middleware';
 import sessionsMiddleware from './middlewares/sessions.middleware';
 import usersMiddleware from './middlewares/users.middleware';
 import loggingMiddleware from './middlewares/logging.middleware';
+import { limiter } from './utils';
 
 dotenv.config();
 
 export const app: Express = express();
+
+app.use(limiter);
 
 app.use(loggingMiddleware.logger);
 

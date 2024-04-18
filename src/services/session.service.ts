@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import logger from '../utils/logger';
+import { logger } from '../utils';
 import { prisma } from './db.service';
 /**
  * Creates a new user session.

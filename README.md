@@ -135,7 +135,3 @@ Error handling is implemented using try-catch blocks in the route handlers. If a
 3. Run database migrations: `yarn prisma:migrate`
 4. Start the server: `yarn start`
 5. Run tests: `yarn test`
-
-## Remark
-
--   Though it is beyond the scope of what the project will be used for. Integrating a rate limiter in production is a good practice. This can be done using the `express-rate-limit` package.

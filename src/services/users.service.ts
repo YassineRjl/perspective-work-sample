@@ -1,7 +1,7 @@
 import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import logger from '../utils/logger';
 import { prisma } from './db.service';
+import { logger } from '../utils';
 
 /**
  * Creates a new user.
