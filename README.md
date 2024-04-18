@@ -113,6 +113,7 @@ Error handling is implemented using try-catch blocks in the route handlers. If a
 -   JSON Web Tokens (JWT)
 -   Jest
 -   Supertest
+-   Winston Logger
 
 ## Project Structure
 
