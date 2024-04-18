@@ -1,5 +1,6 @@
 import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import logger from '../utils/logger';
 import { prisma } from './db.service';
 
 /**
@@ -16,12 +17,13 @@ async function create(data: Omit<User, 'id'>) {
             email: data.email,
         },
     });
-    if (userExists)
+    if (userExists) {
+        logger.info('User already exists', { email: data.email });
         return {
             status: 409,
             message: 'User already exists.',
         };
-
+    }
     // hash the password before storing it
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const user = await prisma.user.create({
@@ -33,6 +35,7 @@ async function create(data: Omit<User, 'id'>) {
 
     // remove the password from the response
     const { password, ...safeUser } = user;
+    logger.info('User created successfully', { user: safeUser });
     return {
         status: 201,
         user: safeUser,
@@ -52,6 +55,7 @@ async function getMultiple(created: 'desc' | 'asc') {
             created,
         },
     });
+    logger.info('Retrieved users successfully', { count: users.length });
     // remove the password from the response
     return users.map(({ password, ...user }) => user);
 }

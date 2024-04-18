@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import logger from '../utils/logger';
 import { prisma } from './db.service';
-
 /**
  * Creates a new user session.
  * @async
@@ -15,6 +15,7 @@ async function create({ email, password }: { email: string; password: string }) 
     const user = await prisma.user.findUnique({ where: { email } });
     // if user does not exist, return an error
     if (!user) {
+        logger.info('Invalid username or password', { email });
         return {
             status: 400,
             message: 'Invalid username or password.',
@@ -24,6 +25,7 @@ async function create({ email, password }: { email: string; password: string }) 
     const validPassword = bcrypt.compareSync(password, user.password);
     // if password is invalid, return an error
     if (!validPassword) {
+        logger.info('Invalid username or password', { email });
         return {
             status: 400,
             message: 'Invalid username or password.',
@@ -35,6 +37,7 @@ async function create({ email, password }: { email: string; password: string }) 
     });
     // if there is an active session, return an error - Only 1 session per user is allowed
     if (activeSessions.length > 0) {
+        logger.info('Active session already exists', { userId: user.id });
         return {
             status: 409,
             message: 'There is already an active session using your account.',
@@ -44,6 +47,7 @@ async function create({ email, password }: { email: string; password: string }) 
     // else, create a new session and return a token
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string);
     await prisma.session.create({ data: { userId: user.id, token } });
+    logger.info('Session created successfully', { userId: user.id });
     return { status: 200, token };
 }
 
@@ -60,6 +64,7 @@ async function remove(userId: string) {
     });
     // if no session is active, then the user is already logged out
     if (activeSessions.length === 0) {
+        logger.info('User already logged out', { userId });
         return { status: 403, message: 'User already logged out.' };
     }
 
@@ -68,6 +73,7 @@ async function remove(userId: string) {
         where: { userId },
         data: { isActive: false },
     });
+    logger.info('Sessions terminated successfully', { userId });
     return { status: 200, message: 'All sessions have been terminated.' };
 }
 

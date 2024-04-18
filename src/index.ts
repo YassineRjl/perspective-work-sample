@@ -6,10 +6,14 @@ import UsersController from './controllers/users.controller';
 import authMiddleware from './middlewares/auth.middleware';
 import sessionsMiddleware from './middlewares/sessions.middleware';
 import usersMiddleware from './middlewares/users.middleware';
+import loggingMiddleware from './middlewares/logging.middleware';
 
 dotenv.config();
 
 export const app: Express = express();
+
+app.use(loggingMiddleware.logger);
+
 app.use(cors()).use(express.json()).options('*', cors());
 
 app.post('/users', usersMiddleware.createUserValidator, UsersController.create);
@@ -18,6 +22,8 @@ app.get('/users', authMiddleware, usersMiddleware.getUsersValidator, UsersContro
 // Additional functionality: signin & logout
 app.post('/signin', sessionsMiddleware.signinValidator, SessionsController.signin);
 app.delete('/logout', authMiddleware, SessionsController.logout);
+
+app.use(loggingMiddleware.errorLogger);
 
 if (process.env.NODE_ENV !== 'test') {
     const port = process.env.PORT ? parseInt(process.env.PORT) : 3111;
